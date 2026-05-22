@@ -1,5 +1,6 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
+import { DURATION_SECONDS } from "./constants";
 
 const SPEECH_TEXT = `皆様、本日はご多用のところ、息子カルビンと留里さんの結婚披露宴にご臨席を賜りまして、誠にありがとうございます。
 
@@ -28,10 +29,6 @@ const SPEECH_TEXT = `皆様、本日はご多用のところ、息子カルビ�
 結びに、お二人の末永いお幸せを心よりお祈り申し上げまして、私のご挨拶とさせていただきます。
 
 本日は誠にありがとうございました。`;
-
-// Tune this to match the speech pace.
-// DURATION_SECONDS controls total scroll time.
-const DURATION_SECONDS = 300; // 5 minutes — adjust before the event
 
 export const SubtitleScroll: React.FC = () => {
   const frame = useCurrentFrame();

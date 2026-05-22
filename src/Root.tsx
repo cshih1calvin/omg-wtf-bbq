@@ -1,9 +1,7 @@
 import React from "react";
 import { Composition } from "remotion";
 import { SubtitleScroll } from "./SubtitleScroll";
-
-const DURATION_SECONDS = 300; // must match SubtitleScroll.tsx
-const FPS = 30;
+import { DURATION_SECONDS, FPS } from "./constants";
 
 export const RemotionRoot: React.FC = () => {
   return (
