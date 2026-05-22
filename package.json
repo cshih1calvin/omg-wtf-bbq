@@ -1,0 +1,29 @@
+{
+  "name": "omg-wtf-bbq",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "remotion studio",
+    "render": "remotion render SubtitleScroll out/subtitle-scroll.mp4"
+  },
+  "remotion": {
+    "entryPoint": "./src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:43443/git/cshih1calvin/omg-wtf-bbq"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@remotion/cli": "^4.0.465",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "remotion": "^4.0.465",
+    "typescript": "^6.0.3"
+  }
+}
