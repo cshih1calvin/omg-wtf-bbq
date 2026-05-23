@@ -41,19 +41,26 @@ export const SubtitleScroll: React.FC = () => {
   const { fps, height } = useVideoConfig();
 
   const [handle] = useState(() => delayRender("Measuring content height"));
-  const [contentHeight, setContentHeight] = useState(0);
+  const [contentHeight, setContentHeight] = useState<number | null>(null);
   const textRef = useRef<HTMLDivElement>(null);
 
+  // First pass: measure the real DOM height
   useLayoutEffect(() => {
     if (textRef.current) {
       setContentHeight(textRef.current.scrollHeight);
+    }
+  }, []);
+
+  // Second pass: signal Remotion only after contentHeight state is committed
+  useLayoutEffect(() => {
+    if (contentHeight !== null) {
       continueRender(handle);
     }
-  }, [handle]);
+  }, [contentHeight, handle]);
 
   const scrollFrames = SCROLL_SECONDS * fps;
   const progress = Math.min(frame / scrollFrames, 1);
-  const totalScrollDistance = contentHeight + height;
+  const totalScrollDistance = (contentHeight ?? 0) + height;
   const translateY = height - progress * totalScrollDistance;
 
   return (
