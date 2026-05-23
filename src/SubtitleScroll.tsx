@@ -40,11 +40,8 @@ export const SubtitleScroll: React.FC = () => {
   // Text block padding and estimated rendered height
   const paddingV = 80;
   const lineHeight = 2.0;
-  const fontSize = 36;
-  // Rough estimate: scroll the text block from bottom of screen to top
-  // We let the content render naturally, then scroll it up by (contentHeight + height)
-  // Since we can't measure at render time, we use a generous overscroll
-  const estimatedContentHeight = 2800; // tuned for this text at fontSize 36
+  const fontSize = 56;
+  const estimatedContentHeight = 4400; // tuned for this text at fontSize 56
   const totalScrollDistance = estimatedContentHeight + height;
   const translateY = height - progress * totalScrollDistance;
 
