@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   AbsoluteFill,
   continueRender,
@@ -6,7 +6,13 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { loadFont } from "@remotion/google-fonts/NotoSansJP";
 import { SCROLL_SECONDS } from "./constants";
+
+const { fontFamily, waitUntilDone } = loadFont("normal", {
+  weights: ["300", "400"],
+  subsets: ["japanese"],
+});
 
 const SPEECH_TEXT = `皆様、本日はご多用のところ、息子カルビンと留里さんの結婚披露宴にご臨席を賜りまして、誠にありがとうございます。
 
@@ -40,20 +46,29 @@ export const SubtitleScroll: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps, height } = useVideoConfig();
 
-  const [handle] = useState(() => delayRender("Measuring content height"));
+  const [handle] = useState(() =>
+    delayRender("Loading font and measuring content")
+  );
   const [contentHeight, setContentHeight] = useState<number | null>(null);
   const textRef = useRef<HTMLDivElement>(null);
 
-  // First pass: measure the real DOM height
-  useLayoutEffect(() => {
-    if (textRef.current) {
+  // Wait for font load + browser font readiness, then measure.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      await waitUntilDone();
+      await document.fonts.ready;
+      if (cancelled || !textRef.current) return;
       setContentHeight(textRef.current.scrollHeight);
-    }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // Second pass: signal Remotion only after contentHeight state is committed
+  // Signal Remotion only after a non-zero measurement is committed.
   useLayoutEffect(() => {
-    if (contentHeight !== null) {
+    if (contentHeight !== null && contentHeight > 0) {
       continueRender(handle);
     }
   }, [contentHeight, handle]);
@@ -84,8 +99,7 @@ export const SubtitleScroll: React.FC = () => {
               color: "#ffffff",
               fontSize: 56,
               lineHeight: 2.0,
-              fontFamily:
-                '"Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif',
+              fontFamily,
               fontWeight: 300,
               letterSpacing: "0.05em",
               margin: "0 0 1.8em 0",

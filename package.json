@@ -25,5 +25,8 @@
     "react-dom": "^19.2.6",
     "remotion": "^4.0.465",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@remotion/google-fonts": "^4.0.465"
   }
 }
