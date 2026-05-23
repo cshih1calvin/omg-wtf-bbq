@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
-import { DURATION_SECONDS } from "./constants";
+import { SCROLL_SECONDS } from "./constants";
 
 const SPEECH_TEXT = `皆様、本日はご多用のところ、息子カルビンと留里さんの結婚披露宴にご臨席を賜りまして、誠にありがとうございます。
 
@@ -34,8 +34,9 @@ export const SubtitleScroll: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps, height } = useVideoConfig();
 
-  const totalFrames = DURATION_SECONDS * fps;
-  const progress = frame / totalFrames; // 0 → 1 over the full duration
+  const scrollFrames = SCROLL_SECONDS * fps;
+  // Clamp to 1 so scroll stops cleanly; video holds black until it ends
+  const progress = Math.min(frame / scrollFrames, 1);
 
   // Text block padding and estimated rendered height
   const paddingV = 80;
