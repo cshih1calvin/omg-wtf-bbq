@@ -1,5 +1,11 @@
-import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import {
+  AbsoluteFill,
+  continueRender,
+  delayRender,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import { SCROLL_SECONDS } from "./constants";
 
 const SPEECH_TEXT = `皆様、本日はご多用のところ、息子カルビンと留里さんの結婚披露宴にご臨席を賜りまして、誠にありがとうございます。
@@ -34,28 +40,33 @@ export const SubtitleScroll: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps, height } = useVideoConfig();
 
-  const scrollFrames = SCROLL_SECONDS * fps;
-  // Clamp to 1 so scroll stops cleanly; video holds black until it ends
-  const progress = Math.min(frame / scrollFrames, 1);
+  const [handle] = useState(() => delayRender("Measuring content height"));
+  const [contentHeight, setContentHeight] = useState(0);
+  const textRef = useRef<HTMLDivElement>(null);
 
-  // Text block padding and estimated rendered height
-  const paddingV = 80;
-  const lineHeight = 2.0;
-  const fontSize = 56;
-  const estimatedContentHeight = 4400; // tuned for this text at fontSize 56
-  const totalScrollDistance = estimatedContentHeight + height;
+  useLayoutEffect(() => {
+    if (textRef.current) {
+      setContentHeight(textRef.current.scrollHeight);
+      continueRender(handle);
+    }
+  }, [handle]);
+
+  const scrollFrames = SCROLL_SECONDS * fps;
+  const progress = Math.min(frame / scrollFrames, 1);
+  const totalScrollDistance = contentHeight + height;
   const translateY = height - progress * totalScrollDistance;
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#000", overflow: "hidden" }}>
       <div
+        ref={textRef}
         style={{
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           transform: `translateY(${translateY}px)`,
-          padding: `${paddingV}px 120px`,
+          padding: "80px 120px",
           willChange: "transform",
         }}
       >
@@ -64,14 +75,13 @@ export const SubtitleScroll: React.FC = () => {
             key={i}
             style={{
               color: "#ffffff",
-              fontSize,
-              lineHeight,
+              fontSize: 56,
+              lineHeight: 2.0,
               fontFamily:
                 '"Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif',
               fontWeight: 300,
               letterSpacing: "0.05em",
-              marginBottom: "1.8em",
-              margin: `0 0 1.8em 0`,
+              margin: "0 0 1.8em 0",
               textAlign: "justify",
               whiteSpace: "pre-wrap",
             }}
